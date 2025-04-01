@@ -1,0 +1,12 @@
+{
+  "name": "friction-flow-animation",
+  "version": "1.0.0",
+  "description": "Interactive friction flow animation with SVG and GSAP",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve"
+  },
+  "dependencies": {
+    "serve": "^14.2.0"
+  }
+}
