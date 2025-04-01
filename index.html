@@ -6,6 +6,8 @@
     <title>Friction Flow Animation</title>
     <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
     <style>
         /* Custom styles beyond Tailwind */
         :root {
@@ -18,6 +20,8 @@
             --funnel-fill: #f8fafc;
             --bubble-stroke: #ff6b00;
             --bubble-fill: rgba(255, 255, 255, 0.9);
+            --pressure-gradient-start: rgba(37, 99, 235, 0.8);
+            --pressure-gradient-end: rgba(37, 99, 235, 0.2);
         }
 
         body {
@@ -76,6 +80,79 @@
             filter: drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.1));
         }
 
+        /* Pressure control styles */
+        .pressure-control {
+            position: absolute;
+            bottom: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            max-width: 600px;
+            height: 80px;
+            background: linear-gradient(to top, var(--pressure-gradient-start), var(--pressure-gradient-end));
+            border-radius: 50% 50% 0 0;
+            cursor: pointer;
+            transition: bottom 0.3s ease;
+            z-index: 20;
+        }
+
+        .pressure-control:hover {
+            bottom: -60px;
+        }
+
+        .pressure-control.active {
+            bottom: -20px;
+        }
+
+        .pressure-indicator {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .pressure-arrows {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        /* Control panel */
+        .control-panel {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 100px;
+            position: relative;
+            z-index: 30;
+        }
+
+        .control-btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .reset-btn {
+            background-color: #f3f4f6;
+            color: #4b5563;
+            border: 1px solid #d1d5db;
+        }
+
+        .reset-btn:hover {
+            background-color: #e5e7eb;
+        }
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .section-label-en {
@@ -117,49 +194,59 @@
                     <line x1="300" y1="650" x2="700" y2="650" stroke="var(--funnel-stroke)" stroke-width="1.5" />
                     
                     <!-- Section 1: R&D Friction Bubbles (3 bubbles) -->
-                    <circle class="bubble" cx="400" cy="110" r="25" />
-                    <circle class="bubble" cx="500" cy="110" r="25" />
-                    <circle class="bubble" cx="600" cy="110" r="25" />
+                    <circle class="bubble" cx="400" cy="110" r="25" data-original-cy="110" data-section="1" />
+                    <circle class="bubble" cx="500" cy="110" r="25" data-original-cy="110" data-section="1" />
+                    <circle class="bubble" cx="600" cy="110" r="25" data-original-cy="110" data-section="1" />
                     
                     <!-- Section 2: Sales Friction Bubbles (6 bubbles) -->
-                    <circle class="bubble" cx="350" cy="230" r="22" />
-                    <circle class="bubble" cx="420" cy="230" r="22" />
-                    <circle class="bubble" cx="490" cy="230" r="22" />
-                    <circle class="bubble" cx="560" cy="230" r="22" />
-                    <circle class="bubble" cx="630" cy="230" r="22" />
-                    <circle class="bubble" cx="700" cy="230" r="22" />
+                    <circle class="bubble" cx="350" cy="230" r="22" data-original-cy="230" data-section="2" />
+                    <circle class="bubble" cx="420" cy="230" r="22" data-original-cy="230" data-section="2" />
+                    <circle class="bubble" cx="490" cy="230" r="22" data-original-cy="230" data-section="2" />
+                    <circle class="bubble" cx="560" cy="230" r="22" data-original-cy="230" data-section="2" />
+                    <circle class="bubble" cx="630" cy="230" r="22" data-original-cy="230" data-section="2" />
+                    <circle class="bubble" cx="700" cy="230" r="22" data-original-cy="230" data-section="2" />
                     
                     <!-- Section 3: Onboarding Friction Bubbles (7 bubbles) -->
-                    <circle class="bubble" cx="320" cy="350" r="20" />
-                    <circle class="bubble" cx="380" cy="350" r="20" />
-                    <circle class="bubble" cx="440" cy="350" r="20" />
-                    <circle class="bubble" cx="500" cy="350" r="20" />
-                    <circle class="bubble" cx="560" cy="350" r="20" />
-                    <circle class="bubble" cx="620" cy="350" r="20" />
-                    <circle class="bubble" cx="680" cy="350" r="20" />
+                    <circle class="bubble" cx="320" cy="350" r="20" data-original-cy="350" data-section="3" />
+                    <circle class="bubble" cx="380" cy="350" r="20" data-original-cy="350" data-section="3" />
+                    <circle class="bubble" cx="440" cy="350" r="20" data-original-cy="350" data-section="3" />
+                    <circle class="bubble" cx="500" cy="350" r="20" data-original-cy="350" data-section="3" />
+                    <circle class="bubble" cx="560" cy="350" r="20" data-original-cy="350" data-section="3" />
+                    <circle class="bubble" cx="620" cy="350" r="20" data-original-cy="350" data-section="3" />
+                    <circle class="bubble" cx="680" cy="350" r="20" data-original-cy="350" data-section="3" />
                     
                     <!-- Section 4: Incremental Adoption Friction Bubbles (9 bubbles) -->
-                    <circle class="bubble" cx="310" cy="470" r="18" />
-                    <circle class="bubble" cx="360" cy="470" r="18" />
-                    <circle class="bubble" cx="410" cy="470" r="18" />
-                    <circle class="bubble" cx="460" cy="470" r="18" />
-                    <circle class="bubble" cx="510" cy="470" r="18" />
-                    <circle class="bubble" cx="560" cy="470" r="18" />
-                    <circle class="bubble" cx="610" cy="470" r="18" />
-                    <circle class="bubble" cx="660" cy="470" r="18" />
-                    <circle class="bubble" cx="710" cy="470" r="18" />
+                    <circle class="bubble" cx="310" cy="470" r="18" data-original-cy="470" data-section="4" />
+                    <circle class="bubble" cx="360" cy="470" r="18" data-original-cy="470" data-section="4" />
+                    <circle class="bubble" cx="410" cy="470" r="18" data-original-cy="470" data-section="4" />
+                    <circle class="bubble" cx="460" cy="470" r="18" data-original-cy="470" data-section="4" />
+                    <circle class="bubble" cx="510" cy="470" r="18" data-original-cy="470" data-section="4" />
+                    <circle class="bubble" cx="560" cy="470" r="18" data-original-cy="470" data-section="4" />
+                    <circle class="bubble" cx="610" cy="470" r="18" data-original-cy="470" data-section="4" />
+                    <circle class="bubble" cx="660" cy="470" r="18" data-original-cy="470" data-section="4" />
+                    <circle class="bubble" cx="710" cy="470" r="18" data-original-cy="470" data-section="4" />
                     
-                    <!-- Section 5: Product Boundary Friction Bubbles (10 bubbles) -->
-                    <circle class="bubble" cx="340" cy="590" r="16" />
-                    <circle class="bubble" cx="380" cy="590" r="16" />
-                    <circle class="bubble" cx="420" cy="590" r="16" />
-                    <circle class="bubble" cx="460" cy="590" r="16" />
-                    <circle class="bubble" cx="500" cy="590" r="16" />
-                    <circle class="bubble" cx="540" cy="590" r="16" />
-                    <circle class="bubble" cx="580" cy="590" r="16" />
-                    <circle class="bubble" cx="620" cy="590" r="16" />
-                    <circle class="bubble" cx="660" cy="590" r="16" />
+                    <!-- Section 5: Product Boundary Friction Bubbles (9 bubbles) -->
+                    <circle class="bubble" cx="340" cy="590" r="16" data-original-cy="590" data-section="5" />
+                    <circle class="bubble" cx="380" cy="590" r="16" data-original-cy="590" data-section="5" />
+                    <circle class="bubble" cx="420" cy="590" r="16" data-original-cy="590" data-section="5" />
+                    <circle class="bubble" cx="460" cy="590" r="16" data-original-cy="590" data-section="5" />
+                    <circle class="bubble" cx="500" cy="590" r="16" data-original-cy="590" data-section="5" />
+                    <circle class="bubble" cx="540" cy="590" r="16" data-original-cy="590" data-section="5" />
+                    <circle class="bubble" cx="580" cy="590" r="16" data-original-cy="590" data-section="5" />
+                    <circle class="bubble" cx="620" cy="590" r="16" data-original-cy="590" data-section="5" />
+                    <circle class="bubble" cx="660" cy="590" r="16" data-original-cy="590" data-section="5" />
                 </svg>
+                
+                <!-- Pressure control -->
+                <div class="pressure-control" id="pressure-control">
+                    <div class="pressure-indicator">应用推力</div>
+                    <div class="pressure-arrows">
+                        <i class="fa fa-angle-up"></i>
+                        <i class="fa fa-angle-up"></i>
+                        <i class="fa fa-angle-up"></i>
+                    </div>
+                </div>
                 
                 <!-- Section 1: R&D Friction -->
                 <div class="section" style="top: 10%;">
@@ -201,13 +288,206 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Control panel -->
+            <div class="control-panel">
+                <button id="reset-btn" class="control-btn reset-btn">重置</button>
+            </div>
         </div>
     </main>
 
     <footer class="bg-white border-t border-gray-200 py-4 px-6">
         <div class="max-w-6xl mx-auto text-center text-gray-600 text-sm">
-            <p>基础布局 - 步骤 2</p>
+            <p>点击并按住底部的"应用推力"区域来观察摩擦泡泡的流动</p>
         </div>
     </footer>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get elements
+            const pressureControl = document.getElementById('pressure-control');
+            const resetBtn = document.getElementById('reset-btn');
+            const bubbles = document.querySelectorAll('.bubble');
+            
+            // Store original positions
+            const originalPositions = {};
+            bubbles.forEach((bubble, index) => {
+                originalPositions[index] = {
+                    cy: parseFloat(bubble.getAttribute('data-original-cy')),
+                    scale: 1
+                };
+            });
+            
+            // Animation variables
+            let isPressed = false;
+            let pressureInterval;
+            
+            // Section boundaries (y-coordinates)
+            const sectionBoundaries = [
+                50,   // Top of funnel
+                170,  // Section 1-2 boundary
+                290,  // Section 2-3 boundary
+                410,  // Section 3-4 boundary
+                530,  // Section 4-5 boundary
+                650   // Bottom of funnel
+            ];
+            
+            // Apply pressure function
+            function applyPressure() {
+                if (!isPressed) return;
+                
+                // Create a timeline for this animation cycle
+                const tl = gsap.timeline();
+                
+                // 按部分处理泡泡，确保每个部分有一半的泡泡上升到上一级
+                for (let section = 5; section >= 1; section--) {
+                    // 获取当前部分的所有泡泡
+                    const sectionBubbles = Array.from(bubbles).filter(bubble => 
+                        parseInt(bubble.getAttribute('data-section')) === section
+                    );
+                    
+                    // 如果没有泡泡，跳过这个部分
+                    if (sectionBubbles.length === 0) continue;
+                    
+                    // 随机选择一半的泡泡移动到上一级
+                    const bubblesCount = sectionBubbles.length;
+                    const halfCount = Math.ceil(bubblesCount / 2);
+                    
+                    // 随机打乱泡泡数组
+                    const shuffledBubbles = [...sectionBubbles].sort(() => Math.random() - 0.5);
+                    
+                    // 选择前一半泡泡移动到上一级
+                    const bubblesToMove = shuffledBubbles.slice(0, halfCount);
+                    
+                    // 移动选中的泡泡到上一级
+                    bubblesToMove.forEach(bubble => {
+                        const currentCy = parseFloat(bubble.getAttribute('cy'));
+                        
+                        // 计算目标位置 - 移动到上一级的中间位置
+                        let targetCy;
+                        if (section > 1) {
+                            // 计算上一级的中间位置
+                            const upperSectionTop = sectionBoundaries[section - 2];
+                            const upperSectionBottom = sectionBoundaries[section - 1];
+                            targetCy = (upperSectionTop + upperSectionBottom) / 2;
+                        } else {
+                            // 如果已经是第一级，则移动到顶部附近
+                            targetCy = 70;
+                        }
+                        
+                        // 添加一些随机性
+                        targetCy += (Math.random() - 0.5) * 40;
+                        
+                        // 更新部分属性
+                        const newSection = Math.max(section - 1, 1);
+                        bubble.setAttribute('data-section', newSection);
+                        
+                        // 添加到时间轴
+                        tl.to(bubble, {
+                            cy: targetCy,
+                            duration: 0.3,
+                            ease: "power2.out"
+                        }, "<0.05");
+                    });
+                    
+                    // 对剩余的泡泡进行小幅度移动
+                    const remainingBubbles = shuffledBubbles.slice(halfCount);
+                    remainingBubbles.forEach(bubble => {
+                        const currentCy = parseFloat(bubble.getAttribute('cy'));
+                        
+                        // 小幅度上移
+                        const moveAmount = Math.random() * 15 + 5;
+                        const newCy = Math.max(currentCy - moveAmount, sectionBoundaries[section - 1] + 10);
+                        
+                        // 添加到时间轴
+                        tl.to(bubble, {
+                            cy: newCy,
+                            duration: 0.2,
+                            ease: "power1.out"
+                        }, "<0.02");
+                    });
+                }
+                
+                // 播放时间轴
+                tl.play();
+            }
+            
+            // Reset bubbles function
+            function resetBubbles() {
+                // Create a timeline for reset animation
+                const tl = gsap.timeline();
+                
+                // Animate each bubble back to original position
+                bubbles.forEach((bubble, index) => {
+                    const originalCy = originalPositions[index].cy;
+                    const originalSection = Math.floor(originalCy / 120) + 1; // Approximate original section
+                    
+                    tl.to(bubble, {
+                        cy: originalCy,
+                        scale: 1,
+                        duration: 0.8,
+                        ease: "elastic.out(1, 0.5)"
+                    }, "<0.02"); // Slight stagger
+                    
+                    // Reset data-section attribute
+                    bubble.setAttribute('data-section', originalSection);
+                });
+                
+                // Play the timeline
+                tl.play();
+            }
+            
+            // Event listeners
+            pressureControl.addEventListener('mousedown', function() {
+                isPressed = true;
+                pressureControl.classList.add('active');
+                pressureInterval = setInterval(applyPressure, 150);
+                applyPressure();
+            });
+            
+            pressureControl.addEventListener('touchstart', function(e) {
+                e.preventDefault(); // Prevent default touch behavior
+                isPressed = true;
+                pressureControl.classList.add('active');
+                pressureInterval = setInterval(applyPressure, 150);
+                applyPressure();
+            });
+            
+            // Stop applying pressure when mouse up anywhere on document
+            document.addEventListener('mouseup', function() {
+                if (isPressed) {
+                    isPressed = false;
+                    pressureControl.classList.remove('active');
+                    clearInterval(pressureInterval);
+                }
+            });
+            
+            document.addEventListener('touchend', function() {
+                if (isPressed) {
+                    isPressed = false;
+                    pressureControl.classList.remove('active');
+                    clearInterval(pressureInterval);
+                }
+            });
+            
+            // Reset button
+            resetBtn.addEventListener('click', resetBubbles);
+            
+            // Initial animation when page loads
+            gsap.from(bubbles, {
+                scale: 0,
+                opacity: 0,
+                duration: 0.8,
+                stagger: {
+                    from: "random",
+                    amount: 0.5
+                },
+                ease: "elastic.out(1, 0.5)"
+            });
+        });
+    </script>
 </body>
 </html>
