@@ -368,18 +368,29 @@
                         
                         // 计算目标位置 - 移动到上一级的中间位置
                         let targetCy;
+                        const upperSectionIndex = section - 2;
+                        const currentSectionIndex = section - 1;
+                        
                         if (section > 1) {
-                            // 计算上一级的中间位置
-                            const upperSectionTop = sectionBoundaries[section - 2];
-                            const upperSectionBottom = sectionBoundaries[section - 1];
+                            // 上一级的顶部和底部
+                            const upperSectionTop = sectionBoundaries[upperSectionIndex];
+                            const upperSectionBottom = sectionBoundaries[currentSectionIndex];
+                            
+                            // 目标位置是上一级的中间
                             targetCy = (upperSectionTop + upperSectionBottom) / 2;
+                            
+                            // 添加小的随机偏移，但确保在上一级的范围内
+                            const maxOffset = (upperSectionBottom - upperSectionTop) / 4;
+                            const randomOffset = Math.random() * maxOffset;
+                            targetCy = targetCy - randomOffset; // 只向上偏移
+                            
+                            // 确保在上一级的范围内
+                            targetCy = Math.max(upperSectionTop + 10, targetCy);
+                            targetCy = Math.min(upperSectionBottom - 10, targetCy);
                         } else {
                             // 如果已经是第一级，则移动到顶部附近
-                            targetCy = 70;
+                            targetCy = 70 + Math.random() * 20; // 顶部附近随机位置
                         }
-                        
-                        // 添加一些随机性
-                        targetCy += (Math.random() - 0.5) * 40;
                         
                         // 更新部分属性
                         const newSection = Math.max(section - 1, 1);
@@ -393,22 +404,8 @@
                         }, "<0.05");
                     });
                     
-                    // 对剩余的泡泡进行小幅度移动
-                    const remainingBubbles = shuffledBubbles.slice(halfCount);
-                    remainingBubbles.forEach(bubble => {
-                        const currentCy = parseFloat(bubble.getAttribute('cy'));
-                        
-                        // 小幅度上移
-                        const moveAmount = Math.random() * 15 + 5;
-                        const newCy = Math.max(currentCy - moveAmount, sectionBoundaries[section - 1] + 10);
-                        
-                        // 添加到时间轴
-                        tl.to(bubble, {
-                            cy: newCy,
-                            duration: 0.2,
-                            ease: "power1.out"
-                        }, "<0.02");
-                    });
+                    // 剩余的泡泡保持不动
+                    // 移除对剩余泡泡的动画处理
                 }
                 
                 // 播放时间轴
@@ -423,7 +420,7 @@
                 // Animate each bubble back to original position
                 bubbles.forEach((bubble, index) => {
                     const originalCy = originalPositions[index].cy;
-                    const originalSection = Math.floor(originalCy / 120) + 1; // Approximate original section
+                    const originalSection = Math.floor((originalCy - 50) / 120) + 1; // 计算原始部分
                     
                     tl.to(bubble, {
                         cy: originalCy,
