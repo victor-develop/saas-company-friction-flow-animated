@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friction Flow Animation</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles beyond Tailwind */
+        :root {
+            --primary-color: #5E6AD2; /* Linear App primary color */
+            --secondary-color: #ff6b00;
+            --background-color: #fafafa;
+            --text-color: #333;
+            --border-color: #d1d5db;
+            --funnel-stroke: #94a3b8; /* More visible but not too sharp */
+            --funnel-fill: #f8fafc;
+            --bubble-stroke: #ff6b00;
+            --bubble-fill: rgba(255, 255, 255, 0.9);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .funnel-container {
+            position: relative;
+            height: 70vh;
+            max-height: 700px;
+            margin: 0 auto;
+            padding: 0 40px; /* Add padding to prevent text from touching edges */
+        }
+
+        .section {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .section-label {
+            display: inline-block;
+            text-align: center;
+        }
+
+        .section-label-en {
+            color: var(--secondary-color);
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+
+        .section-label-zh {
+            color: #666;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        /* SVG styles */
+        .funnel-svg {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* Bubble styles */
+        .bubble {
+            fill: var(--bubble-fill);
+            stroke: var(--bubble-stroke);
+            stroke-width: 2;
+            filter: drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.1));
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .section-label-en {
+                font-size: 1rem;
+            }
+            
+            .funnel-container {
+                padding: 0 20px;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-gray-50">
+    <header class="bg-white shadow-sm py-4 px-6">
+        <div class="max-w-6xl mx-auto">
+            <h1 class="text-xl md:text-2xl font-semibold text-gray-800">Friction 从内部向客户累积</h1>
+        </div>
+    </header>
+
+    <main class="flex-grow px-4 py-8">
+        <div class="max-w-6xl mx-auto">
+            <div class="funnel-container">
+                <!-- SVG Funnel -->
+                <svg class="funnel-svg" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid meet">
+                    <!-- Funnel background -->
+                    <path 
+                        d="M200,50 L800,50 L700,650 L300,650 Z" 
+                        fill="var(--funnel-fill)" 
+                        stroke="var(--funnel-stroke)" 
+                        stroke-width="2.5"
+                    />
+                    
+                    <!-- Horizontal section lines -->
+                    <line x1="200" y1="50" x2="800" y2="50" stroke="var(--funnel-stroke)" stroke-width="1.5" />
+                    <line x1="220" y1="170" x2="780" y2="170" stroke="var(--funnel-stroke)" stroke-width="1.5" />
+                    <line x1="240" y1="290" x2="760" y2="290" stroke="var(--funnel-stroke)" stroke-width="1.5" />
+                    <line x1="260" y1="410" x2="740" y2="410" stroke="var(--funnel-stroke)" stroke-width="1.5" />
+                    <line x1="280" y1="530" x2="720" y2="530" stroke="var(--funnel-stroke)" stroke-width="1.5" />
+                    <line x1="300" y1="650" x2="700" y2="650" stroke="var(--funnel-stroke)" stroke-width="1.5" />
+                    
+                    <!-- Section 1: R&D Friction Bubbles (3 bubbles) -->
+                    <circle class="bubble" cx="400" cy="110" r="25" />
+                    <circle class="bubble" cx="500" cy="110" r="25" />
+                    <circle class="bubble" cx="600" cy="110" r="25" />
+                    
+                    <!-- Section 2: Sales Friction Bubbles (6 bubbles) -->
+                    <circle class="bubble" cx="350" cy="230" r="22" />
+                    <circle class="bubble" cx="420" cy="230" r="22" />
+                    <circle class="bubble" cx="490" cy="230" r="22" />
+                    <circle class="bubble" cx="560" cy="230" r="22" />
+                    <circle class="bubble" cx="630" cy="230" r="22" />
+                    <circle class="bubble" cx="700" cy="230" r="22" />
+                    
+                    <!-- Section 3: Onboarding Friction Bubbles (7 bubbles) -->
+                    <circle class="bubble" cx="320" cy="350" r="20" />
+                    <circle class="bubble" cx="380" cy="350" r="20" />
+                    <circle class="bubble" cx="440" cy="350" r="20" />
+                    <circle class="bubble" cx="500" cy="350" r="20" />
+                    <circle class="bubble" cx="560" cy="350" r="20" />
+                    <circle class="bubble" cx="620" cy="350" r="20" />
+                    <circle class="bubble" cx="680" cy="350" r="20" />
+                    
+                    <!-- Section 4: Incremental Adoption Friction Bubbles (9 bubbles) -->
+                    <circle class="bubble" cx="310" cy="470" r="18" />
+                    <circle class="bubble" cx="360" cy="470" r="18" />
+                    <circle class="bubble" cx="410" cy="470" r="18" />
+                    <circle class="bubble" cx="460" cy="470" r="18" />
+                    <circle class="bubble" cx="510" cy="470" r="18" />
+                    <circle class="bubble" cx="560" cy="470" r="18" />
+                    <circle class="bubble" cx="610" cy="470" r="18" />
+                    <circle class="bubble" cx="660" cy="470" r="18" />
+                    <circle class="bubble" cx="710" cy="470" r="18" />
+                    
+                    <!-- Section 5: Product Boundary Friction Bubbles (10 bubbles) -->
+                    <circle class="bubble" cx="340" cy="590" r="16" />
+                    <circle class="bubble" cx="380" cy="590" r="16" />
+                    <circle class="bubble" cx="420" cy="590" r="16" />
+                    <circle class="bubble" cx="460" cy="590" r="16" />
+                    <circle class="bubble" cx="500" cy="590" r="16" />
+                    <circle class="bubble" cx="540" cy="590" r="16" />
+                    <circle class="bubble" cx="580" cy="590" r="16" />
+                    <circle class="bubble" cx="620" cy="590" r="16" />
+                    <circle class="bubble" cx="660" cy="590" r="16" />
+                </svg>
+                
+                <!-- Section 1: R&D Friction -->
+                <div class="section" style="top: 10%;">
+                    <div class="section-label">
+                        <div class="section-label-en">R&D Friction</div>
+                        <div class="section-label-zh">研发</div>
+                    </div>
+                </div>
+                
+                <!-- Section 2: Sales Friction -->
+                <div class="section" style="top: 30%;">
+                    <div class="section-label">
+                        <div class="section-label-en">Sales Friction</div>
+                        <div class="section-label-zh">销售</div>
+                    </div>
+                </div>
+                
+                <!-- Section 3: Onboarding Friction -->
+                <div class="section" style="top: 50%;">
+                    <div class="section-label">
+                        <div class="section-label-en">Onboarding Friction</div>
+                        <div class="section-label-zh">客户启用</div>
+                    </div>
+                </div>
+                
+                <!-- Section 4: Incremental Adoption Friction -->
+                <div class="section" style="top: 70%;">
+                    <div class="section-label">
+                        <div class="section-label-en">Incremental Adoption Friction</div>
+                        <div class="section-label-zh">客户扩大使用</div>
+                    </div>
+                </div>
+                
+                <!-- Section 5: Product Boundary Friction -->
+                <div class="section" style="top: 90%;">
+                    <div class="section-label">
+                        <div class="section-label-en">Product Boundary Friction</div>
+                        <div class="section-label-zh">客户组合使用</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 py-4 px-6">
+        <div class="max-w-6xl mx-auto text-center text-gray-600 text-sm">
+            <p>基础布局 - 步骤 2</p>
+        </div>
+    </footer>
+</body>
+</html>
